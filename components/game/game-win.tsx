@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import type { AnsweredQuestion } from "@/lib/game/types"
 
 interface GameWinProps {
   score: number
@@ -8,6 +9,7 @@ interface GameWinProps {
   bestStreak: number
   questionsAnswered: number
   totalQuestions: number
+  history: AnsweredQuestion[]
   onPlayAgain: () => void
   onMainMenu: () => void
 }
@@ -18,6 +20,7 @@ export function GameWin({
   bestStreak,
   questionsAnswered,
   totalQuestions,
+  history,
   onPlayAgain,
   onMainMenu,
 }: GameWinProps) {
@@ -57,7 +60,9 @@ export function GameWin({
         <Stat label="Rounds" value={`${questionsAnswered} / ${totalQuestions}`} />
       </div>
 
-      <div className="mt-14 flex w-full max-w-xs flex-col gap-3">
+      <RunRecap history={history} />
+
+      <div className="mt-10 flex w-full max-w-xs flex-col gap-3">
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
