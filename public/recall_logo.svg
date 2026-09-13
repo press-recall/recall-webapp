@@ -1,0 +1,40 @@
+<svg width="900" height="900" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="buttonGlow" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#B8FFCB"/>
+      <stop offset="55%" stop-color="#4CE86A"/>
+      <stop offset="100%" stop-color="#1FAF43"/>
+    </radialGradient>
+
+    <radialGradient id="haloGlow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#4CE86A" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#4CE86A" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0A140D"/>
+      <stop offset="100%" stop-color="#040805"/>
+    </linearGradient>
+
+    <filter id="softBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="900" fill="url(#bgGrad)"/>
+
+  <!-- Memory trail: fading afterimage rings drifting up-left from the main button -->
+  <circle cx="330" cy="330" r="46" fill="none" stroke="#4CE86A" stroke-opacity="0.16" stroke-width="10"/>
+  <circle cx="378" cy="365" r="58" fill="none" stroke="#4CE86A" stroke-opacity="0.28" stroke-width="12"/>
+  <circle cx="432" cy="404" r="72" fill="none" stroke="#4CE86A" stroke-opacity="0.45" stroke-width="14"/>
+
+  <!-- Soft ambient glow behind the live button -->
+  <circle cx="505" cy="450" r="220" fill="url(#haloGlow)" filter="url(#softBlur)"/>
+
+  <!-- The live, "press me now" button -->
+  <circle cx="505" cy="450" r="112" fill="url(#buttonGlow)"/>
+  <circle cx="505" cy="450" r="112" fill="none" stroke="#EEFFF1" stroke-opacity="0.25" stroke-width="3"/>
+  <!-- Highlight -->
+  <ellipse cx="472" cy="412" rx="34" ry="22" fill="#FFFFFF" opacity="0.35"/>
+</svg>
