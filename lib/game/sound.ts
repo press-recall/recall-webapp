@@ -60,4 +60,9 @@ export const sound = {
   gameover() {
     tone(300, 0.2, { type: "sine", gain: 0.08, slideTo: 90 })
   },
+  win() {
+    tone(440, 0.12, { type: "sine", gain: 0.1 })
+    tone(660, 0.12, { type: "sine", gain: 0.1, delay: 0.1 })
+    tone(880, 0.22, { type: "sine", gain: 0.1, delay: 0.2 })
+  },
 }

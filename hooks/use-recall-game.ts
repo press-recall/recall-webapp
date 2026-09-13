@@ -27,6 +27,7 @@ export function useRecallGame() {
   const [history, setHistory] = useState<AnsweredQuestion[]>([])
   const [muted, setMuted] = useState(false)
   const [lastResult, setLastResult] = useState<LastResult | null>(null)
+  const [won, setWon] = useState(false)
 
   const mutedRef = useRef(muted)
   mutedRef.current = muted
@@ -47,6 +48,7 @@ export function useRecallGame() {
     setMistakes(0)
     setHistory([])
     setLastResult(null)
+    setWon(false)
     setPhase("playing")
   }, [])
 
@@ -84,6 +86,7 @@ export function useRecallGame() {
       setPhase("feedback")
 
       if (nextMistakes >= MAX_MISTAKES) {
+        setWon(false)
         play(sound.gameover)
         setTimeout(() => setPhase("gameover"), 900)
         return
@@ -92,6 +95,8 @@ export function useRecallGame() {
       const isLast = currentIndex + 1 >= questions.length
       setTimeout(() => {
         if (isLast) {
+          setWon(true)
+          play(sound.win)
           setPhase("gameover")
         } else {
           setCurrentIndex((i) => i + 1)
@@ -129,6 +134,7 @@ export function useRecallGame() {
     accuracy,
     muted,
     lastResult,
+    won,
     start,
     decide,
     restart,

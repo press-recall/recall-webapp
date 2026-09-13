@@ -6,6 +6,7 @@ import { useRecallGame } from "@/hooks/use-recall-game"
 import { sound } from "@/lib/game/sound"
 import { StartScreen } from "./start-screen"
 import { GameOver } from "./game-over"
+import { GameWin } from "./game-win"
 import { Header } from "./header"
 import { Timer } from "./timer"
 import { DecisionButton } from "./decision-button"
@@ -26,6 +27,7 @@ export function Game() {
     accuracy,
     muted,
     lastResult,
+    won,
     start,
     decide,
     restart,
@@ -139,7 +141,20 @@ export function Game() {
           </motion.div>
         )}
 
-        {phase === "gameover" && (
+        {phase === "gameover" && won && (
+          <GameWin
+            key="gamewin"
+            score={score}
+            accuracy={accuracy}
+            bestStreak={bestStreak}
+            questionsAnswered={history.length}
+            totalQuestions={totalQuestions}
+            onPlayAgain={start}
+            onMainMenu={restart}
+          />
+        )}
+
+        {phase === "gameover" && !won && (
           <GameOver
             key="gameover"
             score={score}
