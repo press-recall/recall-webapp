@@ -94,3 +94,48 @@ function Stat({ label, value, large }: { label: string; value: string; large?: b
     </div>
   )
 }
+
+function RunRecap({ history }: { history: AnsweredQuestion[] }) {
+  if (history.length === 0) return null
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.3 }}
+      className="mt-12 w-full max-w-sm"
+    >
+      <p className="text-left text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Run Recap</p>
+      <ol className="mt-3 max-h-64 w-full overflow-y-auto border border-border/60 text-left">
+        {history.map((entry, i) => (
+          <li
+            key={entry.question.id}
+            className={
+              i === 0
+                ? "flex items-center justify-between gap-3 px-4 py-2.5"
+                : "flex items-center justify-between gap-3 border-t border-border/60 px-4 py-2.5"
+            }
+          >
+            <div className="flex items-center gap-3 overflow-hidden">
+              <span className="w-6 shrink-0 font-mono text-[10px] text-muted-foreground">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="truncate font-mono text-xs uppercase tracking-wide text-foreground">
+                {entry.question.text}
+              </span>
+            </div>
+            <span
+              className={
+                entry.correct
+                  ? "shrink-0 font-mono text-[10px] uppercase tracking-[0.2em] text-primary"
+                  : "shrink-0 font-mono text-[10px] uppercase tracking-[0.2em] text-destructive"
+              }
+            >
+              {entry.decision === "timeout" ? "Waited" : "Pressed"}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </motion.div>
+  )
+}

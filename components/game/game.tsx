@@ -37,11 +37,13 @@ export function Game() {
 
   const [timeRemaining, setTimeRemaining] = useState(0)
   const warnedRef = useRef(false)
+  const timedOutRef = useRef(false)
 
   useEffect(() => {
     if (phase !== "playing" || !currentQuestion) return
     setTimeRemaining(currentQuestion.timeLimit)
     warnedRef.current = false
+    timedOutRef.current = false
     play(sound.question)
 
     const id = setInterval(() => {
@@ -53,7 +55,6 @@ export function Game() {
         }
         if (next <= 0) {
           clearInterval(id)
-          decide("timeout", 0)
           return 0
         }
         return next
@@ -63,6 +64,18 @@ export function Game() {
     return () => clearInterval(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentQuestion?.id, phase])
+
+  useEffect(() => {
+    // Runs as a reaction to the timer hitting zero, rather than inside the
+    // setTimeRemaining updater above. React may invoke a state updater more
+    // than once (e.g. Strict Mode's purity check), so calling a side-effecting
+    // function like decide() from inside one can fire it twice per round.
+    if (phase === "playing" && timeRemaining <= 0 && !timedOutRef.current) {
+      timedOutRef.current = true
+      decide("timeout", 0)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRemaining, phase])
 
   return (
     <main className="relative min-h-dvh w-full overflow-hidden bg-background">
@@ -149,6 +162,7 @@ export function Game() {
             bestStreak={bestStreak}
             questionsAnswered={history.length}
             totalQuestions={totalQuestions}
+            history={history}
             onPlayAgain={start}
             onMainMenu={restart}
           />
