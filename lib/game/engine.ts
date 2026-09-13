@@ -103,48 +103,63 @@ function mulberry32(seed: number) {
 function poolForIndex(
   index: number,
 ): InstructionKind[] {
-  const pool: InstructionKind[] = [
-    "press",
-    "dont-press",
-  ]
+  // Rounds 1–3
+  // Only basic actions.
+  if (index < 3) {
+    return [
+      "press",
+      "dont-press",
+    ]
+  }
 
-  /**
-   * Round 4+
-   *
-   * Introduce immediate memory.
-   */
-  if (index >= 3) {
-    pool.push(
+  // Rounds 4–6
+  // Introduce SAME/OPPOSITE LAST.
+  if (index < 6) {
+    return [
+      "press",
+      "dont-press",
       "same-last",
       "opposite-last",
-    )
+    ]
   }
 
-  /**
-   * Round 10+
-   *
-   * Introduce 2-round memory.
-   */
-  if (index >= 9) {
-    pool.push(
+  // Rounds 7–10
+  // Mostly difficulty 1–2,
+  // with a small introduction of 2-back memory.
+  if (index < 10) {
+    return [
+      "press",
+      "dont-press",
+      "same-last",
+      "opposite-last",
+      "same-2-ago",
+    ]
+  }
+
+  // Rounds 11–14
+  // Full 2-back mechanic.
+  if (index < 14) {
+    return [
+      "press",
+      "dont-press",
+      "same-last",
+      "opposite-last",
       "same-2-ago",
       "opposite-2-ago",
-    )
+    ]
   }
 
-  /**
-   * Round 16+
-   *
-   * Introduce 3-round memory.
-   */
-  if (index >= 15) {
-    pool.push(
-      "same-3-ago",
-      "opposite-3-ago",
-    )
-  }
-
-  return pool
+  // Round 15+
+  // Introduce 3-back gradually.
+  return [
+    "press",
+    "dont-press",
+    "same-last",
+    "opposite-last",
+    "same-2-ago",
+    "opposite-2-ago",
+    "same-3-ago",
+  ]
 }
 
 /**
