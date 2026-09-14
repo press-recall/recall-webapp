@@ -93,7 +93,7 @@ export function Game() {
                       key="btn"
                       text={currentQuestion.text}
                       questionKey={currentQuestion.id}
-                      disabled={false}
+                      disabled={phase !== "playing"}
                       onClick={() => decide("press", timeRemaining)}
                     />
                   ) : (

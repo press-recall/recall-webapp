@@ -29,6 +29,7 @@ export function useRecallGame() {
   const [lastResult, setLastResult] = useState<LastResult | null>(null)
 
   const mutedRef = useRef(muted)
+  const decidingRef = useRef(false)
   mutedRef.current = muted
 
   const play = useCallback((fn: () => void) => {
@@ -51,56 +52,59 @@ export function useRecallGame() {
   }, [])
 
   const decide = useCallback(
-    (decision: PlayerDecision, timeRemaining: number) => {
-      const question = questions[currentIndex]
-      if (!question || phase !== "playing") return
+  (decision: PlayerDecision, timeRemaining: number) => {
+    const question = questions[currentIndex]
+    if (!question || phase !== "playing" || decidingRef.current) return
+    decidingRef.current = true
 
-      // Not pressing is a real action here: a timeout is equivalent to leaving
-      // the button untouched, so it's correct whenever the round wanted "don't press".
-      const pressed = decision === "press"
-      const correct = pressed === question.correctDecision
+    const pressed = decision === "press"
+    const correct = pressed === question.correctDecision
 
-      let pointsAwarded = 0
-      let nextStreak = streak
-      if (correct) {
-        const breakdown = computeScore(question, timeRemaining, streak)
-        pointsAwarded = breakdown.total
-        nextStreak = streak + 1
-        play(sound.correct)
-      } else {
-        nextStreak = 0
-        play(sound.wrong)
-      }
+    let pointsAwarded = 0
+    let nextStreak = streak
+    if (correct) {
+      const breakdown = computeScore(question, timeRemaining, streak)
+      pointsAwarded = breakdown.total
+      nextStreak = streak + 1
+      play(sound.correct)
+    } else {
+      nextStreak = 0
+      play(sound.wrong)
+    }
 
-      const nextBest = Math.max(bestStreak, nextStreak)
-      const nextMistakes = correct ? mistakes : mistakes + 1
+    const nextBest = Math.max(bestStreak, nextStreak)
+    const nextMistakes = correct ? mistakes : mistakes + 1
 
-      setScore((s) => s + pointsAwarded)
-      setStreak(nextStreak)
-      setBestStreak(nextBest)
-      setMistakes(nextMistakes)
-      setHistory((h) => [...h, { question, decision, correct, timeRemaining, pointsAwarded }])
-      setLastResult({ correct, question, pointsAwarded, streakAfter: nextStreak })
-      setPhase("feedback")
+    setScore((s) => s + pointsAwarded)
+    setStreak(nextStreak)
+    setBestStreak(nextBest)
+    setMistakes(nextMistakes)
+    setHistory((h) => [...h, { question, decision, correct, timeRemaining, pointsAwarded }])
+    setLastResult({ correct, question, pointsAwarded, streakAfter: nextStreak })
+    setPhase("feedback")
 
-      if (nextMistakes >= MAX_MISTAKES) {
-        play(sound.gameover)
-        setTimeout(() => setPhase("gameover"), 900)
-        return
-      }
-
-      const isLast = currentIndex + 1 >= questions.length
+    if (nextMistakes >= MAX_MISTAKES) {
+      play(sound.gameover)
       setTimeout(() => {
-        if (isLast) {
-          setPhase("gameover")
-        } else {
-          setCurrentIndex((i) => i + 1)
-          setPhase("playing")
-        }
+        decidingRef.current = false
+        setPhase("gameover")
       }, 900)
-    },
-    [bestStreak, currentIndex, mistakes, phase, play, questions, streak],
-  )
+      return
+    }
+
+    const isLast = currentIndex + 1 >= questions.length
+    setTimeout(() => {
+      decidingRef.current = false
+      if (isLast) {
+        setPhase("gameover")
+      } else {
+        setCurrentIndex((i) => i + 1)
+        setPhase("playing")
+      }
+    }, 900)
+  },
+  [bestStreak, currentIndex, mistakes, phase, play, questions, streak],
+)
 
   const restart = useCallback(() => {
     setPhase("start")
@@ -136,3 +140,4 @@ export function useRecallGame() {
     play,
   }
 }
+

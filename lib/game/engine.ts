@@ -119,18 +119,25 @@ function poolForIndex(
       "press",
       "dont-press",
       "same-last",
+      "same-last",
+      "opposite-last",
       "opposite-last",
     ]
   }
 
   // Rounds 7–10
   // Mostly difficulty 1–2,
-  // with a small introduction of 2-back memory.
+  // with a small introduction of 2-back memory
+  // and the QUICKLY, DON'T PRESS pressure variant.
   if (index < 10) {
     return [
       "press",
       "dont-press",
+      "quickly-dont-press",
+      "quickly-dont-press",
       "same-last",
+      "same-last",
+      "opposite-last",
       "opposite-last",
       "same-2-ago",
     ]
@@ -142,23 +149,32 @@ function poolForIndex(
     return [
       "press",
       "dont-press",
+      "quickly-dont-press",
       "same-last",
       "opposite-last",
       "same-2-ago",
+      "same-2-ago",
+      "opposite-2-ago",
       "opposite-2-ago",
     ]
   }
 
   // Round 15+
-  // Introduce 3-back gradually.
+  // Introduce 3-back gradually (both directions).
   return [
     "press",
     "dont-press",
+    "quickly-dont-press",
     "same-last",
     "opposite-last",
     "same-2-ago",
     "opposite-2-ago",
     "same-3-ago",
+    "opposite-3-ago",
+    "same-2-ago",
+    "opposite-2-ago",
+    "same-3-ago",
+    "opposite-3-ago",
   ]
 }
 
